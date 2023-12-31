@@ -55,7 +55,7 @@ class HomeWorkSolidController extends Controller
             dd($places);
         }
 
-        $exclude_place_ids = '&' . urlencode(implode(',', array_keys($places)));
+        $exclude_place_ids = '&exclude_place_ids=' . urlencode(implode(',', array_keys($places)));
         dump($places);
 
         // for new search without this places
