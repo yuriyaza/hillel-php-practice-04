@@ -3,8 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\PlacesSearch\ApiService;
-use App\PlacesSearch\CalculateDistanceService;
+use App\PlacesSearch\CalculateDistance;
+use App\PlacesSearch\FilterOutput;
 use App\PlacesSearch\PlacesSearch;
+use App\PlacesSearch\SortByDistance;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Http\Request;
 
@@ -14,7 +16,7 @@ class HomeWorkSolidController extends Controller
     {
         $url = 'https://nominatim.openstreetmap.org/search.php?format=jsonv2&q=';
         $search = 'Продукти Одеса';
-        $exclude_place_ids = '';
+        $excludePlaces = [];
 
         // init coordinates
         $initLat = 46.4774700;
@@ -22,23 +24,21 @@ class HomeWorkSolidController extends Controller
 
         $guzzleClient = new GuzzleClient();
         $apiService = new ApiService($guzzleClient, $url);
-        $calculateDistanceService = new CalculateDistanceService($initLat, $initLon);
 
-        $placesSearch = new PlacesSearch($apiService, $calculateDistanceService);
+        $calculateDistance = new CalculateDistance($initLat, $initLon);
+        $sortByDistance = new SortByDistance();
+        $filterOutput = new FilterOutput();
 
-        start:
+        $placesSearch = new PlacesSearch($apiService, $calculateDistance, $sortByDistance, $filterOutput);
 
-        $places = $placesSearch->setSearch($search)->setExcludePlaceIds($exclude_place_ids)->execute();
-
-        // for exit
-        if ($exclude_place_ids) {
-            dd($places);
-        }
-
-        $exclude_place_ids = '&exclude_place_ids=' . urlencode(implode(',', array_keys($places)));
+        // first search
+        $places = $placesSearch->setSearch($search)->setExcludePlaces($excludePlaces)->execute();
         dump($places);
 
-        // for new search without this places
-        goto start;
+        // new search without previous places
+        // search can be repeated 2, 3, ... n times
+        $excludePlaces += $places;
+        $places = $placesSearch->setSearch($search)->setExcludePlaces($excludePlaces)->execute();
+        dump($places);
     }
 }

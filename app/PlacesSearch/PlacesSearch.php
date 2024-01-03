@@ -5,16 +5,20 @@ namespace App\PlacesSearch;
 class PlacesSearch implements PlacesSearchInterface
 {
     protected $apiService;
-    protected $calculateDistanceService;
+    protected $calculateDistance;
+    protected $sortByDistance;
+    protected $filterOutput;
 
     protected $search;
-    protected $exclude_place_ids;
+    protected $excludePlaces = [];
     protected $properties = ['place_id', 'name', 'display_name', 'distance'];
 
-    public function __construct($apiService, $calculateDistanceService)
+    public function __construct($apiService, $calculateDistance, $sortByDistance, $filterOutput)
     {
         $this->apiService = $apiService;
-        $this->calculateDistanceService = $calculateDistanceService;
+        $this->calculateDistance = $calculateDistance;
+        $this->sortByDistance = $sortByDistance;
+        $this->filterOutput = $filterOutput;
     }
 
     public function setSearch($search)
@@ -23,37 +27,27 @@ class PlacesSearch implements PlacesSearchInterface
         return $this;
     }
 
-    public function setExcludePlaceIds($exclude_place_ids)
+    public function setExcludePlaces($excludePlaces)
     {
-        $this->exclude_place_ids = $exclude_place_ids;
+        $this->excludePlaces = $excludePlaces;
         return $this;
     }
 
     public function execute()
     {
-        $places = $this->apiService->setSearch($this->search)->setExcludePlaceIds($this->exclude_place_ids)->execute();
+        // api call and data fetch
+        $places = $this->apiService->setSearch($this->search)->setExcludePlaces($this->excludePlaces)->execute();
 
         //distance calculation
         foreach ($places as $place) {
-            $res = $this->calculateDistanceService->calculateDistance($place);
-            $place->distance = $res;
+            $place->distance = $this->calculateDistance->calculate($place);
         }
 
         // sort by distance
-        usort($places, function ($a, $b) {
-            return ($a->distance < $b->distance) ? -1 : 1;
-        });
+        $places = $this->sortByDistance->sort($places);
 
         //filter output array and add keys by place_id
-        foreach ($places as $key => $place) {
-            foreach ($place as $prop => $val) {
-                if (!in_array($prop, $this->properties)) {
-                    unset($place->$prop);
-                }
-            }
-            $places[$place->place_id] = $place;
-            unset($places[$key]);
-        }
+        $places = $this->filterOutput->filter($places, $this->properties);
 
         return $places;
     }

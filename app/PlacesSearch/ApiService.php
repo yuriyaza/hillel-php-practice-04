@@ -8,7 +8,7 @@ class ApiService implements ApiServiceInterface
     protected $url;
 
     protected $search;
-    protected $exclude_place_ids;
+    protected $exclude_place_ids = '';
 
     public function __construct($guzzleClient, $url)
     {
@@ -22,15 +22,16 @@ class ApiService implements ApiServiceInterface
         return $this;
     }
 
-    public function setExcludePlaceIds($exclude_place_ids)
+    public function setExcludePlaces($excludePlaces)
     {
-        $this->exclude_place_ids = $exclude_place_ids;
+        if (count($excludePlaces) > 0) {
+            $this->exclude_place_ids = '&exclude_place_ids=' . urlencode(implode(',', array_keys($excludePlaces)));
+        }
         return $this;
     }
 
     public function execute()
     {
-        // start parse api
         $response = $this->guzzleClient->request('GET', $this->url . urlencode($this->search) . $this->exclude_place_ids);
         $places = json_decode($response->getBody()->getContents());
         return $places;

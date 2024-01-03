@@ -2,7 +2,7 @@
 
 namespace App\PlacesSearch;
 
-class CalculateDistanceService implements CalculateDistanceServiceInterface
+class CalculateDistance implements CalculateDistanceInterface
 {
     protected $initLat;
     protected $initLon;
@@ -13,7 +13,7 @@ class CalculateDistanceService implements CalculateDistanceServiceInterface
         $this->initLon = $initLon;
     }
 
-    public function calculateDistance($place)
+    public function calculate($place)
     {
         return 2 * asin(sqrt(pow(sin(($this->initLat - $place->lat) / 2), 2) + cos($this->initLat) * cos($place->lat) * pow(sin(($this->initLon - $place->lon) / 2), 2)));
     }
