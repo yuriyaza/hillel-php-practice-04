@@ -6,7 +6,6 @@ use App\PlacesSearch\ApiService;
 use App\PlacesSearch\CalculateDistance;
 use App\PlacesSearch\FilterOutput;
 use App\PlacesSearch\PlacesSearch;
-use App\PlacesSearch\SortByDistance;
 use App\PlacesSearch\SortOutput;
 use GuzzleHttp\Client as GuzzleClient;
 use Illuminate\Http\Request;
