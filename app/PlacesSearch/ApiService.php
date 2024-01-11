@@ -2,18 +2,20 @@
 
 namespace App\PlacesSearch;
 
+use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+
+
 class ApiService implements ApiServiceInterface
 {
+    protected $url = 'https://nominatim.openstreetmap.org/search.php?format=jsonv2&q=';
     protected $guzzleClient;
-    protected $url;
 
     protected $search;
     protected $exclude_place_ids = '';
 
-    public function __construct($guzzleClient, $url)
+    public function __construct(GuzzleClientInterface $guzzleClient)
     {
         $this->guzzleClient = $guzzleClient;
-        $this->url = $url;
     }
 
     public function setSearch($search)

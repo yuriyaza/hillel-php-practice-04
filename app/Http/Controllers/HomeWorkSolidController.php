@@ -2,18 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\PlacesSearch\ApiService;
-use App\PlacesSearch\CalculateDistance;
-use App\PlacesSearch\FilterOutput;
-use App\PlacesSearch\PlacesSearch;
-use App\PlacesSearch\SortOutput;
-use GuzzleHttp\Client as GuzzleClient;
+use App\PlacesSearch\PlacesSearchInterface;
 
 class HomeWorkSolidController extends Controller
 {
-    public function index()
+    public function index(PlacesSearchInterface $placesSearch)
     {
-        $url = 'https://nominatim.openstreetmap.org/search.php?format=jsonv2&q=';
         $searchString = 'Продукти Одеса';
         $filterCriteria = ['place_id', 'name', 'display_name', 'distance'];
         $sortByCriteria = 'distance';
@@ -24,18 +18,9 @@ class HomeWorkSolidController extends Controller
             'lon' => 30.7326200
         ];
 
-        $guzzleClient = new GuzzleClient();
-        $apiService = new ApiService($guzzleClient, $url);
-
-        $calculateDistance = new CalculateDistance();
-        $sortOutput = new SortOutput();
-        $filterOutput = new FilterOutput();
-
-        $placesSearch = new PlacesSearch($apiService, $calculateDistance, $sortOutput, $filterOutput);
-
         // first search
         $places = $placesSearch->setSearchString($searchString)->setInitCoordinates($initCoordinates)->
-            setFilterCriteria($filterCriteria)->setSortByCriteria($sortByCriteria)->execute();
+        setFilterCriteria($filterCriteria)->setSortByCriteria($sortByCriteria)->execute();
         dump($places);
 
         // new search without previous places
