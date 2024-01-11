@@ -15,7 +15,8 @@ class PlacesSearch implements PlacesSearchInterface
     protected $sortByCriteria;
     protected $excludePlaces = [];
 
-    public function __construct($apiService, $calculateDistance, $sortOutput, $filterOutput)
+    public function __construct(ApiServiceInterface $apiService, CalculateDistanceInterface $calculateDistance,
+                                SortOutputInterface $sortOutput, FilterOutputInterface $filterOutput)
     {
         $this->apiService = $apiService;
         $this->calculateDistance = $calculateDistance;
