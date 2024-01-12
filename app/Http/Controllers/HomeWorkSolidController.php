@@ -8,6 +8,7 @@ class HomeWorkSolidController extends Controller
 {
     public function index(PlacesSearchInterface $placesSearch)
     {
+        $url = 'https://nominatim.openstreetmap.org/search.php?format=jsonv2&q=';
         $searchString = 'Продукти Одеса';
         $filterCriteria = ['place_id', 'name', 'display_name', 'distance'];
         $sortByCriteria = 'distance';
@@ -19,7 +20,7 @@ class HomeWorkSolidController extends Controller
         ];
 
         // first search
-        $places = $placesSearch->setSearchString($searchString)->setInitCoordinates($initCoordinates)->
+        $places = $placesSearch->setUrl($url)->setSearchString($searchString)->setInitCoordinates($initCoordinates)->
         setFilterCriteria($filterCriteria)->setSortByCriteria($sortByCriteria)->execute();
         dump($places);
 
