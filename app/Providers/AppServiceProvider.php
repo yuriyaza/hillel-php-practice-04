@@ -14,14 +14,18 @@ use App\PlacesSearch\SortOutput;
 use App\PlacesSearch\SortOutputInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Foundation\Application;
 
 class AppServiceProvider extends ServiceProvider
 {
     public function register(): void
     {
         $this->app->bind(GuzzleClientInterface::class, GuzzleClient::class);
+
         $this->app->bind(ApiServiceInterface::class, ApiService::class);
+        $this->app->when(ApiService::class)->needs('$url')->give('https://nominatim.openstreetmap.org/search.php?format=jsonv2&q=');
 
         $this->app->bind(CalculateDistanceInterface::class, CalculateDistance::class);
         $this->app->bind(SortOutputInterface::class, SortOutput::class);
