@@ -9,6 +9,7 @@ class PlacesSearch implements PlacesSearchInterface
     protected $sortOutput;
     protected $filterOutput;
 
+    protected $url;
     protected $searchString;
     protected $initCoordinates;
     protected $filterCriteria;
@@ -22,6 +23,12 @@ class PlacesSearch implements PlacesSearchInterface
         $this->calculateDistance = $calculateDistance;
         $this->sortOutput = $sortOutput;
         $this->filterOutput = $filterOutput;
+    }
+
+    public function setUrl($url)
+    {
+        $this->url = $url;
+        return $this;
     }
 
     public function setSearchString($searchString)
@@ -51,7 +58,7 @@ class PlacesSearch implements PlacesSearchInterface
     public function execute()
     {
         // api call and data fetch
-        $places = $this->apiService->setSearch($this->searchString)->setExcludePlaces($this->excludePlaces)->execute();
+        $places = $this->apiService->setUrl($this->url)->setSearch($this->searchString)->setExcludePlaces($this->excludePlaces)->execute();
 
         //distance calculation
         foreach ($places as $place) {
