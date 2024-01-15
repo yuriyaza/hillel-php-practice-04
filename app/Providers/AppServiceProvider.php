@@ -14,9 +14,7 @@ use App\PlacesSearch\SortOutput;
 use App\PlacesSearch\SortOutputInterface;
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface as GuzzleClientInterface;
-use Illuminate\Support\Facades\App;
 use Illuminate\Support\ServiceProvider;
-use Illuminate\Foundation\Application;
 
 class AppServiceProvider extends ServiceProvider
 {
